@@ -3,7 +3,6 @@ use std::{fmt, path::Path};
 use mime::{Mime, APPLICATION_OCTET_STREAM};
 use serde::{Deserialize, Serialize};
 use tokio::{
-    fs,
     io::{AsyncRead, Result as IoResult},
 };
 use tokio_util::codec::{BytesCodec, FramedRead};
@@ -259,25 +258,6 @@ impl InputFile {
         Self::Url(url.into())
     }
 
-    /// Creates an `InputFile` from a file path.
-    ///
-    /// # Arguments
-    ///
-    /// * `value` - Path to file on a filesystem.
-    pub async fn path(path: impl AsRef<Path>) -> IoResult<Self> {
-        let path = path.as_ref();
-        let file = fs::File::open(path).await?;
-        let mut reader = InputFileReader::new(file);
-        if let Some(file_name) = path.file_name().and_then(|x| x.to_str()) {
-            let mime_type = path
-                .extension()
-                .and_then(|x| x.to_str())
-                .and_then(|x| mime_guess::from_ext(x).first())
-                .unwrap_or(APPLICATION_OCTET_STREAM);
-            reader = reader.with_file_name(file_name).with_mime_type(mime_type);
-        }
-        Ok(reader.into())
-    }
 }
 
 impl<T> From<T> for InputFile
