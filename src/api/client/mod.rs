@@ -39,7 +39,6 @@ impl Client {
         T: Into<String>,
     {
         let client = HttpClientBuilder::new()
-            .use_rustls_tls()
             .build()
             .map_err(ClientError::BuildClient)?;
         Ok(Self::with_http_client(client, token))

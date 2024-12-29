@@ -72,18 +72,7 @@ impl TryFrom<FormValue> for Part {
                 name,
                 mime_type,
             } => {
-                let body = Body::wrap_stream(reader);
-                let part = Part::stream(body);
-                match (name, mime_type) {
-                    (Some(name), mime_type) => match mime_type {
-                        Some(mime_type) => part
-                            .file_name(name)
-                            .mime_str(mime_type.as_ref())
-                            .map_err(FormError::Mime)?,
-                        None => part.file_name(name),
-                    },
-                    _ => part,
-                }
+                unimplemented!();
             }
         })
     }
